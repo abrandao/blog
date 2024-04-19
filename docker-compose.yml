@@ -1,0 +1,54 @@
+services:
+
+  postgres:
+    image: postgres:14.2
+    environment:
+      POSTGRES_USER: blog
+      POSTGRES_PASSWORD: test_db_password
+    ports: 
+      - '5432:5432'
+    volumes:
+      - blog-postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0
+    ports:
+      - '6379:6379'
+    volumes:
+      - blog-redis:/var/lib/redis/data
+
+  blog:
+    build:
+      context: .
+    volumes:
+      - ./:/opt/app
+    links:
+      - postgres
+      - redis
+    ports:
+      - '8010:8010'
+    env_file:
+      - .env
+
+  sidekiq:
+    build:
+      context: .
+    command: bundle exec sidekiq 
+    links:
+      - postgres
+      - redis
+    env_file:
+      - .env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.nginx
+    links:
+      - blog
+    ports:
+      - '8020:8020'
+
+volumes:
+  blog-postgres:
+  blog-redis:
