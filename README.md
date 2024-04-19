@@ -5,6 +5,9 @@
  - Ruby on Rails 
  - HTML + CSS + JS + Bootstrap
  - PostgreSQL
+ - Redis
+ - Sidekiq
+ - Nginx
 
 ## Arquitetura
   - Monolito
